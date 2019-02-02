@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!--Author: Kashyap Ashokkumar Thakkar, 000742712-->
+  <title>ToDo List</title>
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<style>
+		body{
+		
+			background-color:orange;
+		}
+		#container{
+			position: absolute;
+			right: 50%;
+		}
+		li{
+			font-size: 2em;
+			margin: 10px;
+		}
+		
+		button{
+			margin: 5px;
+			padding: 5px;
+			border-radius: 5px;
+		}
+		input{
+			padding-right: 80px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+		}
+	</style>
+  
+</head>
+
+<body>
+
+  <div id="container"></div>
+
+
+  <script type="text/babel">
+	
+	class ListContainer extends React.Component {
+		constructor(props){
+			super(props);
+			this.state={items:["Wel Come!", "Hi There...","There You Go..."], text:'', button:'add'}
+			this.removeItems = this.removeItems.bind(this);
+			this.editItems = this.editItems.bind(this);
+		}
+		
+	addItems(e) {
+		if(this.state.text!==""){
+			this.setState({ 
+        	items: [...this.state.items, this.state.text ],
+        	text: '',
+			button: 'add'
+        });
+		
+		}
+        e.preventDefault();
+        
+    }
+	
+	changeValue(e) {
+        this.setState({ text: e.target.value})
+    }
+
+	
+    removeItems(item, i){
+	
+        const items = this.state.items;
+        
+		items.splice(i,1);
+        
+		this.setState({
+            items
+        });
+		
+    }
+	
+	editItems(item, i){
+		const items = this.state.items;
+		this.state.text = items[i];
+		items.splice(i,1);
+		this.state.button = 'edit';
+		this.setState({
+            items
+        });
+		
+    }
+	
+	render() {
+
+		return(
+        
+			<div>
+                <form onSubmit = {(e) => this.addItems(e)}>
+                
+					<input placeholder="Add Item"
+                           value={this.state.text}
+						   onChange={(e) => {this.changeValue(e)}}/>
+                    <button type="submit">{this.state.button}</button>
+            
+				</form>
+				
+                <ListPresentation items={this.state.items} removeItems={this.removeItems}
+				editItems={this.editItems}/>
+            </div>
+        );
+    }
+   };
+
+   class ListPresentation extends React.Component {
+
+    removeItem(string, i) {
+        this.props.removeItems(string, i);
+    }
+	
+	editItem(string, i){
+		this.props.editItems(string, i);
+	}
+
+    render() {
+        return(
+            <ul>
+                {this.props.items.map((items,i)=>{
+                    return <li  key={i}>{ items }<button onClick={()=>{this.removeItem(items, i)}}>delete</button><button onClick={() => { this.editItem(items, i)}}>edit</button> </li>
+                })}
+            </ul>
+        );
+    }
+}
+
+   
+   
+   
+   ReactDOM.render(
+     <ListContainer />, 
+     document.querySelector("#container")
+   );
+
+		
+  </script>
+</body>
+
+</html>
